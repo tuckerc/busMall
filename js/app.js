@@ -1,10 +1,13 @@
 'use strict'
 
+const roundLength = 5;
+
 function Product(name) {
   this.name = name;
   this.path = `img/${name}.jpg`;
   this.title = name;
   this.views = 0;
+  this.clicks = 0;
 }
 
 function ProductContainer() {
@@ -12,10 +15,8 @@ function ProductContainer() {
   this.leftImage = '';
   this.middleImage = '';
   this.rightImage = '';
+  this.rounds = 0;
   this.onScreen = function(product) {
-    console.log(`product name: ${product.name}`);
-    console.log(`leftImage: ${this.leftImage.name}`);
-    console.log(`middleImage: ${this.middleImage.name}`);
     if(this.leftImage.name === product.name || this.middleImage.name === product.name || this.rightImage.name === product.name) {
       return true;
     }
@@ -25,7 +26,7 @@ function ProductContainer() {
   };
 }
 
-// products array to store stable 
+// products array to store images
 var products = new ProductContainer();
 products.products.push(new Product('bag'));
 products.products.push(new Product('banana'));
@@ -53,7 +54,22 @@ function getRandom(max) {
   return Math.floor(Math.random() * max);
 }
 
-function renderImages() {
+function renderImages(e) {
+  
+  if(e) {
+    var name = e.target.name;
+    for(var i = 0; i < products.products.length; i++) {
+      if(products.products[i].name === name) {
+        products.products[i].clicks++;
+      }
+    }
+    products.rounds++;
+    if(products.rounds >= roundLength) {
+      // display results
+      displayResults();
+    }
+  }
+
   // refresh left image
   var leftImage = products.products[getRandom(products.products.length)];
   // insert if not currently displayed
@@ -94,6 +110,12 @@ function renderImages() {
   rightImage.views++;
 }
 
-document.getElementById('imageContainer').addEventListener('click',renderImages);
+function displayResults() {
+  console.log(products.products);
+}
+
+document.getElementById('leftImage').addEventListener('click',renderImages);
+document.getElementById('middleImage').addEventListener('click',renderImages);
+document.getElementById('rightImage').addEventListener('click',renderImages);
 
 renderImages();

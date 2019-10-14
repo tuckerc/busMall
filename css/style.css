@@ -1,0 +1,44 @@
+header{
+  height: 5em;
+  margin: 0 auto;
+  background: linear-gradient(45deg, red, blue);
+  color: white;
+}
+
+h1 {
+  text-align: center;
+  font-size: 3em;
+  margin-bottom: 0.0em;
+  margin-top: 0.25em;
+}
+
+p {
+  width: 80%;
+  margin: 0px auto;
+  text-align: center;
+}
+
+main {
+  width: 100%;
+  margin: 0px auto;
+  /* THANK YOU https://wallpapercave.com/starwars-background */
+  background-image: url('../img/stars.jpg');
+  background-color: #cccccc;
+  background-size: contain;
+  min-height: 27em;
+}
+
+img {
+  width: 25%;
+  border: 2mm ridge gray;
+  vertical-align: middle;
+  padding: 0.5em;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  margin-left: 1em;
+}
+
+#imageContainer {
+  margin: 0px auto;
+  text-align: center;
+}
