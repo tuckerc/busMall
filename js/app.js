@@ -165,6 +165,11 @@ function displayResults() {
     imageContainer.removeChild(imageContainer.children[i]);
   }
 
+  // sort products.products by votes
+  products.products.sort(function(productA, productB) {
+    return productB.clicks - productA.clicks;
+  });
+
   // add each image with caption of views and votes
   for(var i = 0; i < products.products.length; i++) {
     var figure = document.createElement('figure');
