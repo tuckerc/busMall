@@ -182,26 +182,70 @@ function displayResults() {
     figure.appendChild(figcaption);
     imageContainer.appendChild(figure);
   }
+  
+  // create canvas
+  var canvas = document.createElement('canvas');
+  canvas.id = 'chart';
+  document.getElementById('chartContainer').appendChild(canvas);
+  
+  // chart data
+  // THANK YOU https://www.chartjs.org/samples/latest/charts/combo-bar-line.html
+  var names = [];
+  var clicksPerView = [];
+  var views = [];
+  var clicks = [];
+  for(var i = 0; i < products.products.length; i++) {
+    names[i] = products.products[i].name;
+    clicksPerView[i] = (products.products[i].clicks / products.products[i].views);
+    views[i] = products.products[i].views;
+    clicks[i] = products.products[i].clicks;
+  }
 
-  // chart
-  var context = document.getElementById('chart').getContext('2d');
-  var chart = new Chart(context, {
-      // The type of chart we want to create
+  var chartData = {
+    labels: names,
+    datasets: [{
       type: 'line',
-
-      // The data for our dataset
-      data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-          datasets: [{
-              label: 'My First dataset',
-              backgroundColor: 'rgb(255, 99, 132)',
-              borderColor: 'rgb(255, 99, 132)',
-              data: [0, 10, 5, 2, 20, 30, 45]
-          }]
+      label: 'Clicks per View',
+      borderColor: 'green',
+      borderWidth: 2,
+      fill: false,
+      data: clicksPerView,
+    },
+    {
+      type: 'bar',
+      label: 'Views',
+      backgroundColor: 'red',
+      data: views,
+      borderColor: 'white',
+      borderWidth: 2
+    },
+    {
+      type: 'bar',
+      label: 'Clicks',
+      backgroundColor: 'blue',
+      data: clicks,
+      borderColor: 'white',
+      borderWidth: 2
+    }]
+  };
+  
+  var context = document.getElementById('chart').getContext('2d');
+  
+  // actual chart
+  var chart = new Chart(context, {
+    type: 'bar',
+    data: chartData,
+    options: {
+      responsive: true,
+      title: {
+        display: true,
+        text: 'Survey Results'
       },
-
-      // Configuration options go here
-      options: {}
+      tooltips: {
+        mode: 'index',
+        intersect: true
+      }
+    }
   });
   console.log(products.products);
 }
