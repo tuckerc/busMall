@@ -7,6 +7,7 @@ function Product(name) {
   this.path = `img/${name}.jpg`;
   this.title = name;
   this.views = 0;
+  this.meanView = 0;
   this.clicks = 0;
 }
 
@@ -23,6 +24,13 @@ function ProductContainer() {
     else {
       return false;
     }
+  };
+  this.updateMeanView = function(productContainer) {
+    var total = 0;
+    for(var i = 0; i < productContainer.products.length; i++) {
+      total += productContainer.products[i].views;
+    }
+    productContainer.meanView = total / productContainer.products.length;
   };
 }
 
@@ -75,12 +83,56 @@ function renderImages(e) {
     displayResults();
   }
   else {
+
+    // update products.meanView
+    products.updateMeanView(products);
+    console.log(`meanView: ${products.meanView}`);
+    
     // refresh left image
     var leftImage = products.products[getRandom(products.products.length)];
-    // insert if not currently displayed
-    while(products.onScreen(leftImage)) {
+    // refresh middle image
+    var middleImage = products.products[getRandom(products.products.length)];
+    // refresh right image
+    var rightImage = products.products[getRandom(products.products.length)];
+
+    var isMiddle = products.onScreen(middleImage);
+    var isRight = products.onScreen(rightImage);
+
+    var leftAboveViewMean = leftImage.views > (products.meanView * 1.2);
+    console.log(`leftAboveViewMean: ${leftAboveViewMean}`);
+    var middleAboveViewMean = middleImage.views > (products.meanView * 1.2);
+    console.log(`middleAboveViewMean: ${middleAboveViewMean}`);
+    var rightAboveViewMean = rightImage.views > (products.meanView * 1.2);
+    console.log(`rightAboveViewMean: ${rightAboveViewMean}`);
+
+    console.log(`left onScreen: ${products.onScreen(leftImage)}`);
+    console.log(`middle onScreen: ${products.onScreen(middleImage)}`);
+    console.log(`right onScreen: ${products.onScreen(rightImage)}`);
+
+    console.log(`left views: ${leftImage.views}`);
+    console.log(`middle views: ${middleImage.views}`);
+    console.log(`right views: ${rightImage.views}`);
+
+    // insert if not currently displayed or views is above product.viewMean
+    while(leftAboveViewMean || products.onScreen(leftImage) || leftImage === middleImage || leftImage === rightImage) {
       leftImage = products.products[getRandom(products.products.length)];
+      leftAboveViewMean = leftImage.views > (products.meanView * 1.2);
+      console.log(`stopped in left`);
     }
+    while(isMiddle || middleAboveViewMean || products.onScreen(middleImage) || middleImage === leftImage || middleImage === rightImage) {
+      middleImage = products.products[getRandom(products.products.length)];
+      middleAboveViewMean = middleImage.views > (products.meanView * 1.2);
+      isMiddle = products.onScreen(middleImage);
+      console.log(`stopped in middle`);
+    }
+    while(isRight || rightAboveViewMean || products.onScreen(rightImage) || rightImage === leftImage || rightImage === middleImage) {
+      rightImage = products.products[getRandom(products.products.length)];
+      rightAboveViewMean = rightImage.views > (products.meanView * 1.2);
+      isRight = products.onScreen(rightImage);
+      console.log(`stopped in right`);
+    }
+
+    // fill right image data
     var currentImage = document.getElementById('leftImage');
     currentImage.src = leftImage.path;
     currentImage.name = leftImage.name;
@@ -88,12 +140,7 @@ function renderImages(e) {
     products.leftImage = leftImage;
     leftImage.views++;
     
-    // refresh middle image
-    var middleImage = products.products[getRandom(products.products.length)];
-    // insert if not currently displayed
-    while(products.onScreen(middleImage)) {
-      middleImage = products.products[getRandom(products.products.length)];
-    }
+    // fill middle image data
     currentImage = document.getElementById('middleImage');
     currentImage.src = middleImage.path;
     currentImage.name = middleImage.name;
@@ -101,19 +148,14 @@ function renderImages(e) {
     products.middleImage = middleImage;
     middleImage.views++;
     
-    // refresh right image
-    var rightImage = products.products[getRandom(products.products.length)];
-    // insert if not currently displayed
-    while(products.onScreen(rightImage)) {
-      rightImage = products.products[getRandom(products.products.length)];
-    }
+    // fill right image data
     currentImage = document.getElementById('rightImage');
     currentImage.src = rightImage.path;
     currentImage.name = rightImage.name;
     currentImage.title = rightImage.name;
     products.rightImage = rightImage;
     rightImage.views++;
-  }  
+  }
 }
 
 function displayResults() {
@@ -123,10 +165,11 @@ function displayResults() {
     imageContainer.removeChild(imageContainer.children[i]);
   }
 
-  // sort products by views
-  products.products.sort(function(a, b) {
-    return b.clicks - a.clicks;
+  // sort products.products by votes
+  products.products.sort(function(productA, productB) {
+    return productB.clicks - productA.clicks;
   });
+
   // add each image with caption of views and votes
   for(var i = 0; i < products.products.length; i++) {
     var figure = document.createElement('figure');
@@ -139,6 +182,27 @@ function displayResults() {
     figure.appendChild(figcaption);
     imageContainer.appendChild(figure);
   }
+
+  // chart
+  var context = document.getElementById('chart').getContext('2d');
+  var chart = new Chart(context, {
+      // The type of chart we want to create
+      type: 'line',
+
+      // The data for our dataset
+      data: {
+          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+          datasets: [{
+              label: 'My First dataset',
+              backgroundColor: 'rgb(255, 99, 132)',
+              borderColor: 'rgb(255, 99, 132)',
+              data: [0, 10, 5, 2, 20, 30, 45]
+          }]
+      },
+
+      // Configuration options go here
+      options: {}
+  });
   console.log(products.products);
 }
 
