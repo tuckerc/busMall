@@ -81,3 +81,7 @@ figure img {
   margin-top: 0.5em;
   margin-left: 0.5em;
 }
+
+#chart {
+  background-color: white;
+}
