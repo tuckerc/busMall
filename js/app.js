@@ -1,6 +1,6 @@
 'use strict'
 
-var roundLength = 5;
+var roundLength = 25;
 
 function Product(name) {
   this.name = name;

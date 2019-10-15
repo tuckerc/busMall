@@ -67,4 +67,11 @@ figure {
   width: 25%;
   display: inline-block;
   margin: 0px auto;
+  margin-bottom: 1em;
+}
+
+figure img {
+  margin-bottom: 0.5em;
+  margin-top: 0.5em;
+  margin-left: 0.5em;
 }
