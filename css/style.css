@@ -26,6 +26,17 @@ main {
   background-color: #cccccc;
   background-size: contain;
   min-height: 27em;
+  color: white;
+  font-size: 1.5em;
+}
+
+form {
+  width: 60%;
+  margin: 0px auto;
+}
+
+form label {
+  font-size: 0.8em;
 }
 
 img {

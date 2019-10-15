@@ -1,6 +1,6 @@
 'use strict'
 
-const roundLength = 5;
+var roundLength = 5;
 
 function Product(name) {
   this.name = name;
@@ -113,6 +113,17 @@ function renderImages(e) {
 function displayResults() {
   console.log(products.products);
 }
+
+function updateRoundLength(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  console.log(`previousSibling: ${document.getElementById('rounds').value}`);
+  roundLength = document.getElementById('rounds').value;
+  console.log(`roundLength: ${roundLength}`);
+  document.getElementById('rounds').value = '';
+}
+
+document.getElementById('submit').addEventListener('click', updateRoundLength);
 
 document.getElementById('leftImage').addEventListener('click',renderImages);
 document.getElementById('middleImage').addEventListener('click',renderImages);
