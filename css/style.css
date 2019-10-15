@@ -1,5 +1,5 @@
 header{
-  height: 5em;
+  min-height: 7em;
   margin: 0 auto;
   background: linear-gradient(45deg, red, blue);
   color: white;
@@ -13,8 +13,9 @@ h1 {
 }
 
 p {
-  width: 80%;
+  width: 90%;
   margin: 0px auto;
+  margin-bottom: 0.5em;
   text-align: center;
 }
 
@@ -25,14 +26,16 @@ main {
   background-image: url('../img/stars.jpg');
   background-color: #cccccc;
   background-size: contain;
-  min-height: 27em;
+  min-height: 20em;
   color: white;
   font-size: 1.5em;
 }
 
 form {
-  width: 60%;
+  width: 50%;
   margin: 0px auto;
+  margin-bottom: 1em;
+  padding-left: 20%;
 }
 
 form label {
@@ -44,12 +47,24 @@ img {
   border: 2mm ridge gray;
   vertical-align: middle;
   padding: 0.5em;
-  margin-top: 2em;
-  margin-bottom: 2em;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
   margin-left: 1em;
 }
 
 #imageContainer {
   margin: 0px auto;
   text-align: center;
+}
+
+footer {
+  min-height: 2em;
+  margin: 0px auto;
+  background: linear-gradient(-45deg, red, blue);
+}
+
+figure {
+  width: 25%;
+  display: inline-block;
+  margin: 0px auto;
 }

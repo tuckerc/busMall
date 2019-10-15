@@ -54,8 +54,7 @@ function getRandom(max) {
   return Math.floor(Math.random() * max);
 }
 
-function renderImages(e) {
-  
+function renderImages(e) {  
   if(e) {
     var name = e.target.name;
     for(var i = 0; i < products.products.length; i++) {
@@ -64,62 +63,89 @@ function renderImages(e) {
       }
     }
     products.rounds++;
-    if(products.rounds >= roundLength) {
-      // display results
-      displayResults();
+  }
+  // if we have exceeded the number of rounds, display results
+  if(products.rounds >= roundLength) {
+    //remove event listeners
+    document.getElementById('submit').removeEventListener('click', updateRoundLength);
+    document.getElementById('leftImage').removeEventListener('click', renderImages);
+    document.getElementById('middleImage').removeEventListener('click', renderImages);
+    document.getElementById('rightImage').removeEventListener('click', renderImages);
+    // display results
+    displayResults();
+  }
+  else {
+    // refresh left image
+    var leftImage = products.products[getRandom(products.products.length)];
+    // insert if not currently displayed
+    while(products.onScreen(leftImage)) {
+      leftImage = products.products[getRandom(products.products.length)];
     }
-  }
-
-  // refresh left image
-  var leftImage = products.products[getRandom(products.products.length)];
-  // insert if not currently displayed
-  while(products.onScreen(leftImage)) {
-    leftImage = products.products[getRandom(products.products.length)];
-  }
-  var currentImage = document.getElementById('leftImage');
-  currentImage.src = leftImage.path;
-  currentImage.name = leftImage.name;
-  currentImage.title = leftImage.name;
-  products.leftImage = leftImage;
-  leftImage.views++;
-  
-  // refresh middle image
-  var middleImage = products.products[getRandom(products.products.length)];
-  // insert if not currently displayed
-  while(products.onScreen(middleImage)) {
-    middleImage = products.products[getRandom(products.products.length)];
-  }
-  currentImage = document.getElementById('middleImage');
-  currentImage.src = middleImage.path;
-  currentImage.name = middleImage.name;
-  currentImage.title = middleImage.name;
-  products.middleImage = middleImage;
-  middleImage.views++;
-  
-  // refresh right image
-  var rightImage = products.products[getRandom(products.products.length)];
-  // insert if not currently displayed
-  while(products.onScreen(rightImage)) {
-    rightImage = products.products[getRandom(products.products.length)];
-  }
-  currentImage = document.getElementById('rightImage');
-  currentImage.src = rightImage.path;
-  currentImage.name = rightImage.name;
-  currentImage.title = rightImage.name;
-  products.rightImage = rightImage;
-  rightImage.views++;
+    var currentImage = document.getElementById('leftImage');
+    currentImage.src = leftImage.path;
+    currentImage.name = leftImage.name;
+    currentImage.title = leftImage.name;
+    products.leftImage = leftImage;
+    leftImage.views++;
+    
+    // refresh middle image
+    var middleImage = products.products[getRandom(products.products.length)];
+    // insert if not currently displayed
+    while(products.onScreen(middleImage)) {
+      middleImage = products.products[getRandom(products.products.length)];
+    }
+    currentImage = document.getElementById('middleImage');
+    currentImage.src = middleImage.path;
+    currentImage.name = middleImage.name;
+    currentImage.title = middleImage.name;
+    products.middleImage = middleImage;
+    middleImage.views++;
+    
+    // refresh right image
+    var rightImage = products.products[getRandom(products.products.length)];
+    // insert if not currently displayed
+    while(products.onScreen(rightImage)) {
+      rightImage = products.products[getRandom(products.products.length)];
+    }
+    currentImage = document.getElementById('rightImage');
+    currentImage.src = rightImage.path;
+    currentImage.name = rightImage.name;
+    currentImage.title = rightImage.name;
+    products.rightImage = rightImage;
+    rightImage.views++;
+  }  
 }
 
 function displayResults() {
+  // remove current images
+  var imageContainer = document.getElementById('imageContainer');
+  for(var i = imageContainer.children.length - 1; i > -1; i--) {
+    imageContainer.removeChild(imageContainer.children[i]);
+  }
+
+  // sort products by views
+  products.products.sort(function(a, b) {
+    return b.clicks - a.clicks;
+  });
+  // add each image with caption of views and votes
+  for(var i = 0; i < products.products.length; i++) {
+    var figure = document.createElement('figure');
+    var img = document.createElement('img');
+    img.src = products.products[i].path;
+    img.alt = products.products[i].name;
+    figure.appendChild(img);
+    var figcaption = document.createElement('figcaption');
+    figcaption.textContent = `Views: ${products.products[i].views}, Votes: ${products.products[i].clicks}`;
+    figure.appendChild(figcaption);
+    imageContainer.appendChild(figure);
+  }
   console.log(products.products);
 }
 
 function updateRoundLength(e) {
   e.preventDefault();
   e.stopPropagation();
-  console.log(`previousSibling: ${document.getElementById('rounds').value}`);
   roundLength = document.getElementById('rounds').value;
-  console.log(`roundLength: ${roundLength}`);
   document.getElementById('rounds').value = '';
 }
 
