@@ -1,6 +1,4 @@
-'use strict'
-
-var roundLength = 25;
+'use strict';
 
 function Product(name) {
   this.name = name;
@@ -12,150 +10,36 @@ function Product(name) {
 }
 
 function ProductContainer() {
-  this.products = [];
+  this.products = [new Product('bag'), new Product('banana'), new Product('bathroom'), new Product('boots'), new Product('breakfast'), new Product('bubblegum'), new Product('chair'), new Product('cthulhu'), new Product('dog-duck'), new Product('dragon'), new Product('pen'), new Product('pet-sweep'), new Product('scissors'), new Product('shark'), new Product('sweep'), new Product('tauntaun'), new Product('unicorn'), new Product('usb'), new Product('water-can'), new Product('wine-glass')];
   this.leftImage = '';
   this.middleImage = '';
   this.rightImage = '';
   this.rounds = 0;
-  this.onScreen = function(product) {
-    if(this.leftImage.name === product.name || this.middleImage.name === product.name || this.rightImage.name === product.name) {
-      return true;
-    }
-    else {
-      return false;
-    }
-  };
-  this.updateMeanView = function(productContainer) {
-    var total = 0;
-    for(var i = 0; i < productContainer.products.length; i++) {
-      total += productContainer.products[i].views;
-    }
-    productContainer.meanView = total / productContainer.products.length;
-  };
+  this.roundLength = 25;
 }
 
-// products array to store images
-var products = new ProductContainer();
-products.products.push(new Product('bag'));
-products.products.push(new Product('banana'));
-products.products.push(new Product('bathroom'));
-products.products.push(new Product('boots'));
-products.products.push(new Product('breakfast'));
-products.products.push(new Product('bubblegum'));
-products.products.push(new Product('chair'));
-products.products.push(new Product('cthulhu'));
-products.products.push(new Product('dog-duck'));
-products.products.push(new Product('dragon'));
-products.products.push(new Product('pen'));
-products.products.push(new Product('pet-sweep'));
-products.products.push(new Product('scissors'));
-products.products.push(new Product('shark'));
-products.products.push(new Product('sweep'));
-products.products.push(new Product('tauntaun'));
-products.products.push(new Product('unicorn'));
-products.products.push(new Product('usb'));
-products.products.push(new Product('water-can'));
-products.products.push(new Product('wine-glass'));
-
-// function to return random integer
-function getRandom(max) {
-  return Math.floor(Math.random() * max);
+function updateRoundLength(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  container.roundLength = document.getElementById('rounds').value;
+  document.getElementById('rounds').value = '';
 }
 
-function renderImages(e) {  
-  if(e) {
-    var name = e.target.name;
-    for(var i = 0; i < products.products.length; i++) {
-      if(products.products[i].name === name) {
-        products.products[i].clicks++;
-      }
-    }
-    products.rounds++;
-  }
-  // if we have exceeded the number of rounds, display results
-  if(products.rounds >= roundLength) {
-    //remove event listeners
-    document.getElementById('submit').removeEventListener('click', updateRoundLength);
-    document.getElementById('leftImage').removeEventListener('click', renderImages);
-    document.getElementById('middleImage').removeEventListener('click', renderImages);
-    document.getElementById('rightImage').removeEventListener('click', renderImages);
-    // display results
-    displayResults();
+function onScreen(product) {
+  if(container.leftImage.name === product.name || container.middleImage.name === product.name || container.rightImage.name === product.name) {
+    return true;
   }
   else {
-
-    // update products.meanView
-    products.updateMeanView(products);
-    console.log(`meanView: ${products.meanView}`);
-    
-    // refresh left image
-    var leftImage = products.products[getRandom(products.products.length)];
-    // refresh middle image
-    var middleImage = products.products[getRandom(products.products.length)];
-    // refresh right image
-    var rightImage = products.products[getRandom(products.products.length)];
-
-    var isMiddle = products.onScreen(middleImage);
-    var isRight = products.onScreen(rightImage);
-
-    var leftAboveViewMean = leftImage.views > (products.meanView * 1.2);
-    console.log(`leftAboveViewMean: ${leftAboveViewMean}`);
-    var middleAboveViewMean = middleImage.views > (products.meanView * 1.2);
-    console.log(`middleAboveViewMean: ${middleAboveViewMean}`);
-    var rightAboveViewMean = rightImage.views > (products.meanView * 1.2);
-    console.log(`rightAboveViewMean: ${rightAboveViewMean}`);
-
-    console.log(`left onScreen: ${products.onScreen(leftImage)}`);
-    console.log(`middle onScreen: ${products.onScreen(middleImage)}`);
-    console.log(`right onScreen: ${products.onScreen(rightImage)}`);
-
-    console.log(`left views: ${leftImage.views}`);
-    console.log(`middle views: ${middleImage.views}`);
-    console.log(`right views: ${rightImage.views}`);
-
-    // insert if not currently displayed or views is above product.viewMean
-    while(leftAboveViewMean || products.onScreen(leftImage) || leftImage === middleImage || leftImage === rightImage) {
-      leftImage = products.products[getRandom(products.products.length)];
-      leftAboveViewMean = leftImage.views > (products.meanView * 1.2);
-      console.log(`stopped in left`);
-    }
-    while(isMiddle || middleAboveViewMean || products.onScreen(middleImage) || middleImage === leftImage || middleImage === rightImage) {
-      middleImage = products.products[getRandom(products.products.length)];
-      middleAboveViewMean = middleImage.views > (products.meanView * 1.2);
-      isMiddle = products.onScreen(middleImage);
-      console.log(`stopped in middle`);
-    }
-    while(isRight || rightAboveViewMean || products.onScreen(rightImage) || rightImage === leftImage || rightImage === middleImage) {
-      rightImage = products.products[getRandom(products.products.length)];
-      rightAboveViewMean = rightImage.views > (products.meanView * 1.2);
-      isRight = products.onScreen(rightImage);
-      console.log(`stopped in right`);
-    }
-
-    // fill right image data
-    var currentImage = document.getElementById('leftImage');
-    currentImage.src = leftImage.path;
-    currentImage.name = leftImage.name;
-    currentImage.title = leftImage.name;
-    products.leftImage = leftImage;
-    leftImage.views++;
-    
-    // fill middle image data
-    currentImage = document.getElementById('middleImage');
-    currentImage.src = middleImage.path;
-    currentImage.name = middleImage.name;
-    currentImage.title = middleImage.name;
-    products.middleImage = middleImage;
-    middleImage.views++;
-    
-    // fill right image data
-    currentImage = document.getElementById('rightImage');
-    currentImage.src = rightImage.path;
-    currentImage.name = rightImage.name;
-    currentImage.title = rightImage.name;
-    products.rightImage = rightImage;
-    rightImage.views++;
+    return false;
   }
+};
+
+function updateMeanView(ProductContainer) {
+  var total = 0;
+  for(var i = 0; i < ProductContainer.products.length; i++) {
+    total += ProductContainer.products[i].views;
+  }
+  ProductContainer.meanView = total / ProductContainer.products.length;
 }
 
 function displayResults() {
@@ -165,20 +49,20 @@ function displayResults() {
     imageContainer.removeChild(imageContainer.children[i]);
   }
 
-  // sort products.products by votes
-  products.products.sort(function(productA, productB) {
+  // sort container.products by votes
+  container.products.sort(function(productA, productB) {
     return productB.clicks - productA.clicks;
   });
 
   // add each image with caption of views and votes
-  for(var i = 0; i < products.products.length; i++) {
+  for(var i = 0; i < container.products.length; i++) {
     var figure = document.createElement('figure');
     var img = document.createElement('img');
-    img.src = products.products[i].path;
-    img.alt = products.products[i].name;
+    img.src = container.products[i].path;
+    img.alt = container.products[i].name;
     figure.appendChild(img);
     var figcaption = document.createElement('figcaption');
-    figcaption.textContent = `Views: ${products.products[i].views}, Votes: ${products.products[i].clicks}`;
+    figcaption.textContent = `Views: ${container.products[i].views}, Votes: ${container.products[i].clicks}`;
     figure.appendChild(figcaption);
     imageContainer.appendChild(figure);
   }
@@ -194,11 +78,11 @@ function displayResults() {
   var clicksPerView = [];
   var views = [];
   var clicks = [];
-  for(var i = 0; i < products.products.length; i++) {
-    names[i] = products.products[i].name;
-    clicksPerView[i] = (products.products[i].clicks / products.products[i].views);
-    views[i] = products.products[i].views;
-    clicks[i] = products.products[i].clicks;
+  for(var i = 0; i < container.products.length; i++) {
+    names[i] = container.products[i].name;
+    clicksPerView[i] = (container.products[i].clicks / container.products[i].views);
+    views[i] = container.products[i].views;
+    clicks[i] = container.products[i].clicks;
   }
 
   var chartData = {
@@ -247,20 +131,137 @@ function displayResults() {
       }
     }
   });
-  console.log(products.products);
 }
 
-function updateRoundLength(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  roundLength = document.getElementById('rounds').value;
-  document.getElementById('rounds').value = '';
+// Function to check if local storage compatable
+// THANK YOU http://diveinto.html5doctor.com/storage.html
+function supportsHTML5Storage() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
+  }
 }
 
+// function to return random integer
+function getRandom(max) {
+  return Math.floor(Math.random() * max);
+}
+
+function readProductsFromLocal() {
+  // check for local storage compatibility
+  if(supportsHTML5Storage()) {
+    // pull local storage products
+    //check to see if local storage exists
+    if(localStorage['tuckerBusMall']) {
+      container = JSON.parse(localStorage['tuckerBusMall']);
+    }
+    return true;
+  }
+  return false;
+}
+function writeProductsToLocal() {
+  // check for local storage compatibility
+  if(supportsHTML5Storage()) {
+    // write to local products
+    localStorage.removeItem('tuckerBusMall');
+    localStorage.setItem('tuckerBusMall',JSON.stringify(container));
+    return true;
+  }
+  return false;
+}
+
+function renderImages(e) {  
+  if(e) {
+    var name = e.target.name;
+    for(var i = 0; i < container.products.length; i++) {
+      if(container.products[i].name === name) {
+        container.products[i].clicks++;
+      }
+    }
+    container.rounds++;
+  }
+  // if we have exceeded the number of rounds, display results
+  if(container.rounds >= container.roundLength) {
+    //remove event listeners
+    document.getElementById('submit').removeEventListener('click', updateRoundLength);
+    document.getElementById('leftImage').removeEventListener('click', renderImages);
+    document.getElementById('middleImage').removeEventListener('click', renderImages);
+    document.getElementById('rightImage').removeEventListener('click', renderImages);
+    // display results
+    displayResults();
+    writeProductsToLocal();
+  }
+  else {
+
+    // update products.meanView
+    updateMeanView(container);
+    
+    // refresh left image
+    var leftImage = container.products[getRandom(container.products.length)];
+    // refresh middle image
+    var middleImage = container.products[getRandom(container.products.length)];
+    // refresh right image
+    var rightImage = container.products[getRandom(container.products.length)];
+
+    var isMiddle = onScreen(middleImage);
+    var isRight = onScreen(rightImage);
+
+    var leftAboveViewMean = leftImage.views > (container.meanView * 1.2);
+    var middleAboveViewMean = middleImage.views > (container.meanView * 1.2);
+    var rightAboveViewMean = rightImage.views > (container.meanView * 1.2);
+
+    // insert if not currently displayed or views is above product.viewMean
+    while(leftAboveViewMean || onScreen(leftImage) || leftImage === middleImage || leftImage === rightImage) {
+      leftImage = container.products[getRandom(container.products.length)];
+      leftAboveViewMean = leftImage.views > (container.meanView * 1.2);
+    }
+    while(isMiddle || middleAboveViewMean || onScreen(middleImage) || middleImage === leftImage || middleImage === rightImage) {
+      middleImage = container.products[getRandom(container.products.length)];
+      middleAboveViewMean = middleImage.views > (container.meanView * 1.2);
+      isMiddle = onScreen(middleImage);
+    }
+    while(isRight || rightAboveViewMean || onScreen(rightImage) || rightImage === leftImage || rightImage === middleImage) {
+      rightImage = container.products[getRandom(container.products.length)];
+      rightAboveViewMean = rightImage.views > (container.meanView * 1.2);
+      isRight = onScreen(rightImage);
+    }
+
+    // fill right image data
+    var currentImage = document.getElementById('leftImage');
+    currentImage.src = leftImage.path;
+    currentImage.name = leftImage.name;
+    currentImage.title = leftImage.name;
+    container.leftImage = leftImage;
+    leftImage.views++;
+    
+    // fill middle image data
+    currentImage = document.getElementById('middleImage');
+    currentImage.src = middleImage.path;
+    currentImage.name = middleImage.name;
+    currentImage.title = middleImage.name;
+    container.middleImage = middleImage;
+    middleImage.views++;
+    
+    // fill right image data
+    currentImage = document.getElementById('rightImage');
+    currentImage.src = rightImage.path;
+    currentImage.name = rightImage.name;
+    currentImage.title = rightImage.name;
+    container.rightImage = rightImage;
+    rightImage.views++;
+  }
+}
+
+// products array to store images
+var container = new ProductContainer();
+readProductsFromLocal();
 document.getElementById('submit').addEventListener('click', updateRoundLength);
 
 document.getElementById('leftImage').addEventListener('click',renderImages);
 document.getElementById('middleImage').addEventListener('click',renderImages);
 document.getElementById('rightImage').addEventListener('click',renderImages);
+
+container.rounds = 0;
 
 renderImages();
